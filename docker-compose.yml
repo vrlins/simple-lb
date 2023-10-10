@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend1:
+    image: strm/helloworld-http
+    networks:
+      - backend-network
+
+  backend2:
+    image: strm/helloworld-http
+    networks:
+      - backend-network
+
+  backend3:
+    image: strm/helloworld-http
+    networks:
+      - backend-network
+
+  lb:
+    build: .
+    container_name: load-balancer
+    ports:
+      - "3000:3000"
+    command: --backends "http://backend1:80,http://backend2:80,http://backend3:80"
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
